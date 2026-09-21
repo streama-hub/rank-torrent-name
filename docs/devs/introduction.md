@@ -18,17 +18,21 @@ In summary, Rank Torrent Name provides a flexible and customizable system for ra
 
 ## Installation
 
-You can install `rank-torrent-name` using pip:
+Install RTN and its dependencies:
 
 ```bash
-pip install rank-torrent-name
+pip install git+https://github.com/streama-hub/rank-torrent-name.git
 ```
 
-or you can add it to your project through `Poetry` as well,
+For development, clone the repository and install the dependencies with Poetry:
 
 ```bash
-poetry add rank-torrent-name
+git clone https://github.com/streama-hub/rank-torrent-name.git
+cd rank-torrent-name
+poetry install --with dev
 ```
+
+PTT is installed automatically from the revision pinned in the project dependencies.
 
 ---
 
@@ -124,8 +128,8 @@ Example usage:
 from RTN.models import BaseRankingModel
 
 class MyRankingModel(BaseRankingModel):
-    uhd = 200  # Ultra HD content
-    hdr = 100  # HDR content
+    uhd: int = 200  # Ultra HD content
+    hdr: int = 100  # HDR content
     # Define more attributes and scores as needed
 ```
 
@@ -159,7 +163,7 @@ rtn = RTN(settings=settings, ranking_model=DefaultRanking())
             try:
                 torrent: Torrent = rtn.rank(
                     stream.title,
-                    infohash=stream.infohash
+                    infohash=stream.infohash,
                     correct_title=correct_title_or_query,
                     remove_trash=True
                 )
@@ -196,9 +200,11 @@ print(torrent.data.resolution) # '1080p'
 ```
 
 !!! tip "Missing something?"
-    Don't see something you want in the list? Submit a [Feature Request](https://github.com/dreulavelle/rank-torrent-name/issues/new?assignees=dreulavelle&labels=kind%2Ffeature%2Cstatus%2Ftriage&projects=&template=---feature-request.yml) to have it added!
+    Contributions are welcome through [pull requests](https://github.com/streama-hub/rank-torrent-name/pulls).
 
 ## Performance Benchmarks
+
+The measurements below are historical upstream results, not benchmarks of this fork.
 
 Here, we dive into the heart of RTN's efficiency, showcasing how it performs under various loads. Whether you're parsing a single title or ranking thousands, understanding these benchmarks will help you optimize your use of RTN.
 

@@ -66,21 +66,21 @@ This sorting method ensures that you get the best quality options within your pr
 ## 🌐 Language Settings
 
 #### How do I set my language preferences?
-A: The "**languages**" setting has three sub-settings:
-- `required`: List 2-character language codes that must be present.
-- `exclude`: List 2-character language codes you don't want.
-- `preferred`: List 2-character language codes you prefer.
+A: The "**languages**" setting has four sub-settings for audio:
+- `required`: At least one of these languages must be present.
+- `allowed`: A matching language bypasses exclusions, after the required check.
+- `exclude`: Languages you don't want.
+- `preferred`: Languages that receive a ranking bonus.
 
 Example: `["es", "de", "fr", "ja"]`
 
-There is a few preset language codes you can use as well:
-  - `any`: This will include all languages.
-  - `common`: This will include common languages like English, Spanish, French, Japanese, etc.
-  - `anime`: This will include anime languages. (`ja`, `en`, `zh`)
-  - `nonanime`: This will include non-anime languages. (`en`, `zh`)
+Base codes match regional tags: `fr` matches `fr-FR` and `fr-CA`, while `fr-CA`
+does not match `fr-FR`. Subtitle languages do not satisfy audio preferences.
 
-!!! note "All language preferences use ISO 639-1 two-letter language codes."
-!!! tip "If you want to exclude all languages, regardless of language preferences, set this to `["any"]`"
+The `anime`, `non_anime`, `common` and `all` groups are available for required,
+allowed and excluded languages. `anime` contains `ja`, `zh` and `ko`; `all` is
+the union of the anime and non-anime groups, excluding English and `multi`.
+See [Language Support](languages.md) for matching and group behavior.
 
 ---
 
@@ -106,7 +106,7 @@ This excludes torrents with indicators of poor quality or undesirable sources, s
 - Deleted scenes
 - HQ audio cleanups
 
-For more information on the trash regex, see [Parsett Trash Regex](https://github.com/dreulavelle/PTT/blob/main/PTT/handlers.py#L60).
+For more information on the trash regex, see [Parsett Trash Regex](https://github.com/streama-hub/PTT/blob/main/PTT/handlers.py).
 These filters help ensure that only higher quality releases are considered, improving the overall quality of your media collection.
 
 #### How does the "remove_ranks_under" option work?
@@ -118,7 +118,9 @@ A: The `remove_ranks_under` option (default -10000) sets a minimum rank threshol
 A: When set to True, the `remove_unknown_languages` option (default False) will exclude torrents that don't have a language in the title.
 
 #### What is the purpose of "allow_english_in_languages"?
-A: The `allow_english_in_languages` option (default False), when set to True, allows English language torrents to be included even if a user has excluded English from their language preferences. This can be useful for users who want to prioritize content in specific languages but still want access to English-language releases if they're available alongside their preferred languages. It essentially bypasses the language exclusion for English, ensuring that multilingual torrents containing English aren't filtered out due to strict language settings.
+A: The `allow_english_in_languages` option (default True) bypasses language
+exclusions when English audio is present, including regional tags such as
+`en-US` and `en-GB`. It does not bypass the required-language check.
 
 One scenario is if you wanted a movie that's released in Spanish, and you excluded the Spanish language, but you still want to include it if it's in English as well. This setting works great for Anime as well that you want to include if it's in English as well.
 

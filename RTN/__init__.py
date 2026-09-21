@@ -14,7 +14,6 @@ Main:
     - RTN: Main class for parsing and ranking torrent names.
     - Torrent: Data class for storing parsed torrent information.
     - parse: Parse a single torrent name.
-    - batch_parse: Parse multiple torrent names in batches.
     - DefaultRanking: Default ranking model for calculating torrent ranks.
     - ParsedData: Data class for storing parsed torrent information.
 
@@ -36,7 +35,6 @@ Extras:
     - trash_handler: Function for checking if a torrent is trash.
     - title_match: Function for matching torrent titles.
     - sort_torrents: Function for sorting torrents based on rank.
-    - parse_extras: Function for parsing additional torrent information.
     - episodes_from_season: Function for generating episode titles from a season.
 
 For more information on each module or class, refer to the respective docstrings.

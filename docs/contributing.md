@@ -6,10 +6,10 @@ We're thrilled you're considering contributing to RTN! This comprehensive guide 
 
 ### Setting Up Your Development Environment
 
-1. **Fork and Clone the Repository**:
-   Start by forking the RTN repository on GitHub. Then, clone your fork locally:
+1. **Clone the Repository**:
+   Clone the RTN repository locally:
    ```bash
-   git clone https://github.com/YOUR_USERNAME/rank-torrent-name.git
+   git clone https://github.com/streama-hub/rank-torrent-name.git
    cd rank-torrent-name
    ```
 
@@ -23,10 +23,10 @@ We're thrilled you're considering contributing to RTN! This comprehensive guide 
    ```
    This command creates a virtual environment and installs all necessary dependencies, including development tools.
 
-4. **Activate the Virtual Environment**:
-   To work within the project's virtual environment, run:
+4. **Use the Virtual Environment**:
+   Run commands through Poetry, for example:
    ```bash
-   poetry shell
+   poetry run python --version
    ```
 
 ### Making Changes
@@ -93,7 +93,7 @@ docs: update installation instructions in README
 
 ### Submitting a Pull Request
 
-1. Go to the [RTN GitHub repository](https://github.com/dreulavelle/rank-torrent-name).
+1. Go to the [RTN GitHub repository](https://github.com/streama-hub/rank-torrent-name).
 2. Click "Pull requests" and then "New pull request".
 3. Choose your fork and the branch containing your changes.
 4. Click "Create pull request".
@@ -107,9 +107,8 @@ docs: update installation instructions in README
 
 If you need assistance or have questions:
 
-- Open an issue for bugs or feature discussions
-- Join our [Discord community](https://discord.gg/rivenmedia) for real-time chat
-- Check out the [FAQ](Users/FAQ.md) for common questions
+- Check the [repository](https://github.com/streama-hub/rank-torrent-name) for updates and proposed changes
+- Check out the [FAQ](users/faq.md) for common questions
 
 ---
 

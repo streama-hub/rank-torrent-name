@@ -6,10 +6,10 @@ Thank you for considering a contribution to RTN! This document provides guidelin
 
 ### Setup Environment
 
-1. **Fork and Clone the Repository**: Start by forking the project repository, then clone your fork and enter the project directory:
+1. **Clone the Repository**: Clone the project repository and enter the project directory:
 
 ```bash
-git clone https://github.com/dreulavelle/rank-torrent-name.git
+git clone https://github.com/streama-hub/rank-torrent-name.git
 cd rank-torrent-name
 ```
 
@@ -74,18 +74,18 @@ git push origin <branch-name>
 
 ### Submitting a Pull Request
 
-- Go to the GitHub page of the original RTN repository.
+- Go to the [RTN GitHub repository](https://github.com/streama-hub/rank-torrent-name).
 - Click on the "Pull requests" tab and then the "New pull request" button.
 - Choose your fork and branch with the changes, then click "Create pull request".
 - Provide a clear and detailed description of the changes and the reasons behind them.
 
 ## Community and Conduct
 
-We strive to maintain a welcoming and inclusive community. All contributors are expected to adhere to our Code of Conduct (link to your code of conduct here).
+Keep contributions and discussions respectful and focused on the project.
 
 ## Questions and Support
 
-If you have any questions or need help with your setup, feel free to open an issue for discussion or assistance.
+Read the [FAQ](docs/users/faq.md) for configuration guidance and check the [repository](https://github.com/streama-hub/rank-torrent-name) for updates.
 
 ---
 

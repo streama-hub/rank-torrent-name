@@ -65,7 +65,7 @@ SCRAPED_DATA = [
     {"title": "Game Of Thrones (2011) Season 01 S01 REPACK (2160p BluRay X265 HEVC 10bit AAC 7.1 Joy) [UTR]", "fetch": False, "rank": 1},
     {"title": "Game.Of.Thrones.S01-S04.BluRay.4K.UHD.H265", "fetch": False, "rank": 1},
     {"title": "Game of Thrones S01E01 2160p UHD BluRay x265-SCOTLUHD [eztv]", "fetch": False, "rank": 1},
-    {"title": "Game of Thrones - Temporadas Completas (1080p) Acesse o ORIGINAL WWW.BLUDV.TV", "fetch": False, "rank": 0},
+    {"title": "Game of Thrones - Temporadas Completas (1080p) Acesse o ORIGINAL WWW.BLUDV.TV", "fetch": False, "rank": -1},
     {"title": "Il.Trono.Di.Spade.S01E01-10.BDMux.1080p.AC3.ITA.ENG.SUBS.HEVC", "fetch": False, "rank": -1},
     {"title": "Игра престолов / Game of Thrones [S01-08] (2013-2022) BDRip 1080p от Generalfilm | D | P", "fetch": False, "rank": -1},
     {"title": "Игра престолов / Game of Thrones [S01-08] (2011-2019) BDRip 720p | LostFilm", "fetch": False, "rank": -1},

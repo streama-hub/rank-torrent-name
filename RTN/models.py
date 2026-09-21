@@ -23,7 +23,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, TypeAlias, Union
 
 import regex
-from pydantic import BaseModel, ConfigDict, Field, field_serializer, field_validator, model_validator
+from pydantic import AliasChoices, BaseModel, ConfigDict, Field, field_serializer, field_validator, model_validator
 from regex import Pattern
 
 from RTN.exceptions import GarbageTorrent
@@ -45,9 +45,11 @@ class ParsedData(BaseModel):
     episodes: List[int] = []
     complete: bool = False
     volumes: List[int] = []
-    languages: List[str] = []
+    audio_languages: List[str] = Field(default_factory=list)
+    subtitle_languages: List[str] = []
     quality: Optional[str] = None
     hdr: List[str] = []
+    dolby_vision_profiles: List[str] = []
     codec: Optional[str] = None
     audio: List[str] = []
     channels: List[str] = []
@@ -60,11 +62,11 @@ class ParsedData(BaseModel):
     bitrate: Optional[str] = None
     network: Optional[str] = None
     extended: bool = False
-    converted: bool = False
+    converted: bool = Field(default=False, validation_alias=AliasChoices("converted", "convert"))
     hardcoded: bool = False
     region: Optional[str] = None
     ppv: bool = False
-    _3d: bool = False
+    three_d: bool = Field(default=False, validation_alias=AliasChoices("3d", "three_d"), serialization_alias="3d")
     site: Optional[str] = None
     size: Optional[str] = None
     proper: bool = False
@@ -226,6 +228,8 @@ class BaseRankingModel(BaseModel):
     dolby_digital_plus: int = 0
     dts_lossy: int = 0
     dts_lossless: int = 0
+    dts_hd: Optional[int] = None
+    dts_x: Optional[int] = None
     # opus: int = 0
     # pcm: int = 0
     flac: int = 0
@@ -462,6 +466,8 @@ class AudioRankModel(ConfigModelBase):
     dolby_digital_plus: CustomRank = Field(default_factory=lambda: CustomRank(fetch=True))
     dts_lossy: CustomRank = Field(default_factory=lambda: CustomRank(fetch=True))
     dts_lossless: CustomRank = Field(default_factory=lambda: CustomRank(fetch=True))
+    dts_hd: Optional[CustomRank] = None
+    dts_x: Optional[CustomRank] = None
     # opus: CustomRank = Field(default_factory=lambda: CustomRank(fetch=True))
     # pcm: CustomRank = Field(default_factory=lambda: CustomRank(fetch=True))
     flac: CustomRank = Field(default_factory=lambda: CustomRank(fetch=True))
@@ -470,6 +476,14 @@ class AudioRankModel(ConfigModelBase):
     stereo: CustomRank = Field(default_factory=lambda: CustomRank(fetch=True))
     surround: CustomRank = Field(default_factory=lambda: CustomRank(fetch=True))
     truehd: CustomRank = Field(default_factory=lambda: CustomRank(fetch=True))
+
+    def __getitem__(self, key: str) -> Any:
+        # Preserve existing DTS policies unless a more specific policy is configured.
+        if key == "dts_hd":
+            return self.dts_hd if self.dts_hd is not None else self.dts_lossy
+        if key == "dts_x":
+            return self.dts_x if self.dts_x is not None else self.dts_lossless
+        return super().__getitem__(key)
 
 
 class ExtrasRankModel(ConfigModelBase):

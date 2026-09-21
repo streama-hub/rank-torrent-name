@@ -1,5 +1,5 @@
 ## get_lev_ratio
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/extras.py/#L39)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/extras.py)
 ```python
 .get_lev_ratio(
    correct_title: str, parsed_title: str, threshold: float = 0.85
@@ -26,7 +26,7 @@ Compares two titles using the Levenshtein ratio to determine similarity.
 
 
 ## title_match
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/extras.py/#L23)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/extras.py)
 ```python
 .title_match(
    correct_title: str, parsed_title: str, threshold: float = 0.85
@@ -53,7 +53,7 @@ Compares two titles using the Levenshtein ratio to determine similarity.
 
 
 ## sort_torrents
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/extras.py/#L64)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/extras.py)
 ```python
 .sort_torrents(
    torrents: Set[Torrent]
@@ -84,7 +84,7 @@ with the torrent's infohash as the key.
 
 
 ## extract_seasons
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/extras.py/#L119)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/extras.py)
 ```python
 .extract_seasons(
    raw_title: str
@@ -109,7 +109,7 @@ Extract season numbers from the title or filename.
 
 
 ## extract_episodes
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/extras.py/#L134)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/extras.py)
 ```python
 .extract_episodes(
    raw_title: str
@@ -134,7 +134,7 @@ Extract episode numbers from the title or filename.
 
 
 ## episodes_from_season
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/extras.py/#L149)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/extras.py)
 ```python
 .episodes_from_season(
    raw_title: str, season_num: int

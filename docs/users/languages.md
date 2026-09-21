@@ -1,6 +1,19 @@
 # Language Support in RTN
 
-We use ISO 639-1 two-letter language codes to manage language preferences. This standardization allows for precise control over language-related settings in your torrent ranking and filtering processes.
+Language preferences accept both base codes and regional tags. `fr` matches all
+French variants, including `fr-FR` and `fr-CA`; `fr-CA` only matches that tag.
+Matching is case-insensitive. A regional preference does not match an older value
+that only contains the base code, because its region is unknown.
+
+These preferences apply to audio (`audio_languages`), not `subtitle_languages`.
+`VOSTFR` alone does not satisfy a required French audio preference. `multi` may be
+selected explicitly but does not establish any particular language.
+
+The same matching applies to `required`, `allowed`, `exclude`, `preferred` and the
+English exception. The built-in `anime`, `non_anime`, `common` and `all` groups
+continue to expand for required, allowed and excluded languages. `all` retains
+its existing scope (anime and non-anime groups); it does not include English or
+the `multi` marker.
 
 ---
 

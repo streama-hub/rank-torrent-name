@@ -18,7 +18,7 @@ from RTN.models import ParsedData, Torrent
             "episodes": [1, 2],
             "codec": "hevc",
             "audio": ["AAC"],
-            "languages": [],
+            "audio_languages": [],
             "bit_depth": "10bit"
         }
     ),
@@ -35,7 +35,7 @@ def test_parsed_data_model(test_string, expected_data):
     assert data.episodes == expected_data["episodes"]
     assert data.codec == expected_data["codec"]
     assert data.audio == expected_data["audio"]
-    assert data.languages == expected_data["languages"]
+    assert data.audio_languages == expected_data["audio_languages"]
     assert data.bit_depth == expected_data["bit_depth"]
 
 
@@ -75,7 +75,7 @@ def test_levenshtein_ratio(title, query, expected):
         "raw_title": "www.5MovieRulz.show - Khel Khel Mein (2024) 1080p Hindi DVDScr - x264 - AAC - 2.3GB.mkv",
         "parsed_title": "Khel Khel Mein",
         "year": 2024,
-        "languages": ["hi"],
+        "audio_languages": ["hi"],
         "seasons": [],
         "episodes": [],
         "quality": "SCR",
@@ -103,7 +103,7 @@ def test_random_releases_parse(release_name, expected):
         resolution="1080p",
         seasons=[],
         episodes=[],
-        languages=["hi"],
+        audio_languages=["hi-IN"],
         quality="SCR",
         codec="avc",
         audio=["AAC"],

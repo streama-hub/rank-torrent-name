@@ -1,7 +1,7 @@
 ## ParsedData
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/models.py/#L32)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/models.py)
 ```python 
-ParsedData()
+ParsedData(raw_title="Example")
 ```
 Parsed data model for a torrent title.
 
@@ -11,28 +11,28 @@ Parsed data model for a torrent title.
 
 
 ### .type
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/models.py/#L85)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/models.py)
 ```python
-.type()
+parsed_data.type
 ```
-Returns the type of the torrent based on its attributes.
+Returns the type of the torrent based on its attributes. This is a property, not a method.
 
 ---
 
 ### .to_dict
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/models.py/#L91)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/models.py)
 ```python
 .to_dict()
 ```
-Returns a json serializable dictionary of the parsed data.
+Returns a JSON string of the parsed data. Use `model_dump()` for a Python dictionary.
 
 ----
 
 
 ## Torrent
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/models.py/#L94)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/models.py)
 ```python 
-Torrent()
+Torrent(raw_title="Example", infohash="a" * 40, data=ParsedData(raw_title="Example"))
 ```
 Represents a torrent with metadata parsed from its title and additional computed properties.
 
@@ -77,7 +77,7 @@ True
 **Methods:**
 
 ### .to_dict
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/models.py/#L168)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/models.py)
 ```python
 .to_dict()
 ```
@@ -85,7 +85,7 @@ True
 ----
 
 ## BaseRankingModel
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/models.py/#L171)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/models.py)
 ```python 
 BaseRankingModel()
 ```
@@ -103,7 +103,7 @@ The ranking values are used to determine the quality of a media item based on it
 
 
 ## DefaultRanking
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/models.py/#L258)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/models.py)
 ```python 
 DefaultRanking()
 ```
@@ -112,7 +112,7 @@ Ranking model preset that covers the highest qualities like 4K HDR.
 ---
 
 ## SettingsModel
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/models.py/#L437)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/models.py)
 ```python 
 SettingsModel()
 ```
@@ -148,20 +148,24 @@ This model supports advanced regex features, enabling powerful and precise filte
 
 
 ```python
+from RTN.models import CustomRank, SettingsModel
 
->>> print([pattern.pattern for pattern in settings.require])
-['\b4K|1080p\b', '720p']
->>> print([pattern.pattern for pattern in settings.preferred])
-['BluRay', '\bS\d+', 'HDR|HDR10']
->>> print(settings.custom_ranks["uhd"].rank)
-150
+settings = SettingsModel(
+    require=["1080p"],
+    preferred=["BluRay"],
+    custom_ranks={
+        "quality": {"bluray": CustomRank(use_custom_rank=True, rank=150)},
+    },
+)
+print([pattern.pattern for pattern in settings.require])
+print(settings.custom_ranks["quality"]["bluray"].rank)  # 150
 ```
 
 ----
 
 
 ## CustomRank
-[source](https://github.com/dreulavelle/rank-torrent-name/blob/main/RTN/models.py/#L430)
+[source](https://github.com/streama-hub/rank-torrent-name/blob/main/RTN/models.py)
 ```python 
 CustomRank()
 ```

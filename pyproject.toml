@@ -1,11 +1,10 @@
 [tool.poetry]
 name = "rank-torrent-name"
-version = "1.11.1"
+version = "1.0.0"
 description = "Rank filenames based on user-defined rules!"
 authors = ["Spoked <dreu.lavelle@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/dreulavelle/rank-torrent-name"
 package-mode = true
 
 include = [
@@ -55,13 +54,17 @@ exclude = [
     "setup.cfg",
 ]
 
+[tool.poetry.urls]
+"Repository" = "https://github.com/streama-hub/rank-torrent-name"
+"Upstream" = "https://github.com/dreulavelle/rank-torrent-name"
+
 [tool.poetry.dependencies]
 python = "^3.11"
 pydantic = "^2.6.3"
 pymediainfo = "^7.0.1"
 orjson = "^3.10.15"
 levenshtein = "^0.27.1"
-parsett = "^1.8.2"
+parsett = {git = "https://github.com/streama-hub/PTT.git", rev = "c4b50d771b3426423d22b9a4a95400f3765aa1e7"}
 
 [tool.poetry.group.dev.dependencies]
 coverage = "^7.4.3"

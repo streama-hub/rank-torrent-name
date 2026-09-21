@@ -3,7 +3,6 @@ This module contains functions to determine if a torrent should be fetched based
 
 Functions:
 - `check_fetch`: Evaluates user settings and unwanted quality to decide if a torrent should be fetched.
-- `check_trash`: Identifies if the title contains any unwanted patterns.
 - `trash_handler`: Checks if the title is trash based on user settings, return True if trash is detected.
 - `language_handler`: Checks if the languages are excluded based on user settings.
 
@@ -16,10 +15,11 @@ For more information on each function, refer to the respective docstrings.
 """
 import regex
 from .models import ParsedData, SettingsModel
+from .patterns import language_matches
 
 ANIME = {"ja", "zh", "ko"}
 NON_ANIME = {
-    "de", "es", "hi", "ta", "ru", "ua", "th", "it",
+    "de", "es", "hi", "ta", "ru", "ua", "uk", "th", "it",
     "ar", "pt", "fr", "pa", "mr", "gu", "te", "kn",
     "ml", "vi", "id", "tr", "he", "fa", "el", "lt",
     "lv", "et", "pl", "cs", "sk", "hu", "ro", "bg",
@@ -27,7 +27,7 @@ NON_ANIME = {
     "ms"
 }
 
-COMMON = {"de", "es", "hi", "ta", "ru", "ua", "th", "it", "zh", "ar", "fr"}
+COMMON = {"de", "es", "hi", "ta", "ru", "ua", "uk", "th", "it", "zh", "ar", "fr"}
 ALL = ANIME | NON_ANIME
 
 
@@ -141,7 +141,7 @@ def language_handler(data: ParsedData, settings: SettingsModel, failed_keys: set
     allowed_langs = settings.languages.get("allowed", [])
     exclude_langs = settings.languages.get("exclude", [])
 
-    if not data.languages:
+    if not data.audio_languages:
         if remove_unknown:
             failed_keys.add("unknown_language")
             return True
@@ -150,17 +150,17 @@ def language_handler(data: ParsedData, settings: SettingsModel, failed_keys: set
             return True
         return False
 
-    if required_langs and not any(lang in required_langs for lang in data.languages):
+    if required_langs and not any(language_matches(lang, required) for lang in data.audio_languages for required in required_langs):
         failed_keys.add("missing_required_language")
         return True
 
-    if "en" in data.languages and settings.options.get("allow_english_in_languages", False):
+    if any(language_matches(lang, "en") for lang in data.audio_languages) and settings.options.get("allow_english_in_languages", False):
         return False
 
-    if allowed_langs and any(lang in allowed_langs for lang in data.languages):
+    if allowed_langs and any(language_matches(lang, allowed) for lang in data.audio_languages for allowed in allowed_langs):
         return False
 
-    excluded = [lang for lang in data.languages if lang in exclude_langs]
+    excluded = [lang for lang in data.audio_languages if any(language_matches(lang, excluded) for excluded in exclude_langs)]
     if excluded:
         for lang in excluded:
             failed_keys.add(f"lang_{lang}")
@@ -295,12 +295,18 @@ def fetch_audio(data: ParsedData, settings: SettingsModel, failed_keys: set) -> 
 
     audio_map = {
         "AAC": "aac",
+        "HE-AAC": "aac",
+        "HE-AACv2": "aac",
         # "OPUS": "opus",
         "Atmos": "atmos",
         "Dolby Digital": "dolby_digital",
         "Dolby Digital Plus": "dolby_digital_plus",
         "DTS Lossy": "dts_lossy",
         "DTS Lossless": "dts_lossless",
+        "DTS-HD MA": "dts_lossless",
+        "DTS-HD HRA": "dts_lossy",
+        "DTS-HD": "dts_hd",
+        "DTS-X": "dts_x",
         # "PCM": "pcm",
         "FLAC": "flac",
         "MP3": "mp3",
@@ -310,7 +316,7 @@ def fetch_audio(data: ParsedData, settings: SettingsModel, failed_keys: set) -> 
 
     for audio_format in data.audio:
         if audio_format not in audio_map:
-            # PTN parses other audio formats that RTN doesn't support.
+            # PTT can return audio formats without a ranking policy.
             continue
 
         category = "trash" if audio_format == "HQ Clean Audio" else "audio"
@@ -329,11 +335,15 @@ def fetch_hdr(data: ParsedData, settings: SettingsModel, failed_keys: set) -> bo
     hdr_map = {
         "DV": "dolby_vision",
         "HDR": "hdr",
+        "HDR10": "hdr",
+        "HLG": "hdr",
         "HDR10+": "hdr10plus",
         "SDR": "sdr"
     }
 
     for hdr_format in data.hdr:
+        if hdr_format not in hdr_map:
+            continue
         if not settings.custom_ranks["hdr"][hdr_map[hdr_format]].fetch:
             failed_keys.add(f"hdr_{hdr_map[hdr_format]}")
             return True
@@ -343,7 +353,7 @@ def fetch_hdr(data: ParsedData, settings: SettingsModel, failed_keys: set) -> bo
 def fetch_other(data: ParsedData, settings: SettingsModel, failed_keys: set) -> bool:
     """Check if the other data is fetchable based on user settings."""
     fetch_map = {
-        "_3d": ("extras", "three_d"),
+        "three_d": ("extras", "three_d"),
         "converted": ("extras", "converted"),
         "documentary": ("extras", "documentary"),
         "dubbed": ("extras", "dubbed"),

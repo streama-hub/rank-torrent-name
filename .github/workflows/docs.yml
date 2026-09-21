@@ -10,6 +10,7 @@ permissions:
 
 jobs:
   deploy:
+    if: github.repository == 'dreulavelle/rank-torrent-name'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

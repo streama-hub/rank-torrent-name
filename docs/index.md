@@ -3,14 +3,8 @@
 <h1>🏆 Rank Torrent Name 🏆</h1>
 
 <p align="center">
-  <a href="https://codecov.io/gh/dreulavelle/rank-torrent-name">
-    <img src="https://codecov.io/gh/dreulavelle/rank-torrent-name/graph/badge.svg" alt="Code Coverage"/>
-  </a>
-  <a href="https://badge.fury.io/py/rank-torrent-name">
-    <img src="https://badge.fury.io/py/rank-torrent-name.svg" alt="PyPI version"/>
-  </a>
-  <img src="https://img.shields.io/github/actions/workflow/status/dreulavelle/rank-torrent-name/battery.yml" alt="GitHub Actions Workflow Status"/>
-  <img src="https://img.shields.io/github/license/dreulavelle/rank-torrent-name" alt="GitHub License"/>
+  <img src="https://img.shields.io/github/actions/workflow/status/streama-hub/rank-torrent-name/battery.yml?branch=main" alt="GitHub Actions Workflow Status"/>
+  <img src="https://img.shields.io/github/license/streama-hub/rank-torrent-name" alt="GitHub License"/>
 </p>
 
 <p align="center">
@@ -27,7 +21,7 @@
 
 ## 🌟 Key Features
 
-- **🔍 Smart Torrent Parsing:** Leverages [Parsett](https://github.com/dreulavelle/ptt) for in-depth metadata extraction and enhancement.
+- **🔍 Smart Torrent Parsing:** Leverages [Parsett](https://github.com/streama-hub/PTT) for in-depth metadata extraction and enhancement.
 - **🏆 Customizable Ranking:** Tailor your torrent selection criteria with user-defined preferences for quality, resolution, audio, and more.
 - **🎯 Precision Filtering:** Easily set requirements, exclusions, and preferences to pinpoint your ideal torrents.
 - **📊 Flexible Ranking Model:** Utilize the default model or create your own to match your unique needs.
@@ -69,7 +63,6 @@ RTN offers a comprehensive toolkit for torrent management:
 - `trash_handler`: Identify and filter low-quality torrents.
 - `title_match`: Accurate torrent title comparison.
 - `sort_torrents`: Rank-based torrent sorting.
-- `parse_extras`: Extract additional torrent metadata.
 - `episodes_from_season`: Generate episode titles for entire seasons.
 
-📘 For a deeper dive, check out our [Getting Started](./Users/FAQ.md) guide for users or the [Developers](./Developers/Introduction.md) section for technical insights.
+📘 For a deeper dive, check out our [Getting Started](users/faq.md) guide for users or the [Developers](devs/introduction.md) section for technical insights.

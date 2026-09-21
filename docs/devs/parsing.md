@@ -24,9 +24,11 @@ The `ParsedData` model is a comprehensive data structure that represents the par
 | `episodes`        | List of episode numbers for TV shows.                                       |
 | `complete`        | Indicates if the torrent contains a complete season or series.              |
 | `volumes`         | List of volume numbers.                                                     |
-| `languages`       | List of languages available in the torrent.                                 |
+| `audio_languages` | Audio language tags, e.g. `fr-CA`, `ja-JP`, or `multi` when unspecified.      |
+| `subtitle_languages` | Subtitle language tags, independent from audio languages.               |
 | `quality`         | The overall quality descriptor (e.g., "HDTV", "WEBRip").                    |
 | `hdr`             | List of HDR formats.                                                        |
+| `dolby_vision_profiles` | Explicit Dolby Vision profiles, e.g. `8.1`.                             |
 | `codec`           | The video codec used (e.g., "HEVC").                                |
 | `audio`           | List of audio codecs or formats.                                            |
 | `channels`        | List of audio channels.                                                     |
@@ -43,7 +45,7 @@ The `ParsedData` model is a comprehensive data structure that represents the par
 | `hardcoded`       | Indicates if the torrent has hardcoded subtitles.                           |
 | `region`          | The region code of the torrent.                                             |
 | `ppv`             | Indicates if the torrent is a pay-per-view content.                         |
-| `_3d`             | Indicates if the torrent is in 3D.                                          |
+| `three_d`         | Indicates if the torrent is in 3D; serialized as `3d` with `by_alias=True`. |
 | `site`            | The site from which the torrent was sourced.                                |
 | `size`            | The size of the torrent.                                                    |
 | `proper`          | Indicates if the torrent is a proper release.                               |
@@ -59,15 +61,28 @@ The `ParsedData` model is a comprehensive data structure that represents the par
 | `extension`       | The file extension of the torrent.                                          |
 | `torrent`         | Indicates if the data represents a torrent.                                 |
 
+Regional tags preserve explicit regions. Generic language markers use PTT's CLDR
+default region; this does not establish which regional audio track is present.
+`multi` indicates multiple unspecified languages, not any particular language.
+`translate_langs=True` returns display names for both language lists and is intended
+for display, not language filtering. Use `three_d` for the 3D attribute in Python;
+`3d` is its aliased JSON name and is accepted from PTT when constructing `ParsedData`.
+
+Parsed models and JSON use `audio_languages` and `subtitle_languages`.
+The former `languages` and `_3d` names no longer populate result fields or provide
+attribute access. Unrecognized constructor keys are ignored by the model;
+update callers to use the current field names.
+The filtering configuration remains `settings.languages`; it is not parsed data.
+
 ##### Usage Examples
 
 1. Creating a ParsedData instance:
 
 ```python
-from RTN.models import ParsedData
+from RTN import parse
 
 parsed_data = parse("Game.of.Thrones.S01E01.1080p.WEBRip.DD5.1.x264-GalaxyRG[TGx]")
-print(result)
+print(parsed_data)
 ```
 
 Result:

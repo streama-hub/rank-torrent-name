@@ -54,3 +54,10 @@ def normalize_title(raw_title: str, lower: bool = True) -> str:
 def check_pattern(patterns: list[regex.Pattern], raw_title: str) -> bool:
     """Check if a pattern is found in the input string."""
     return any(pattern.search(raw_title) for pattern in patterns)
+
+
+def language_matches(language: str, preference: str) -> bool:
+    """Match a language tag against an exact tag or a broader language preference."""
+    language = language.lower()
+    preference = preference.lower()
+    return language == preference or language.startswith(preference + "-")

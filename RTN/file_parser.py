@@ -113,13 +113,13 @@ def parse_media_file(file_path: str | Path) -> Optional[MediaMetadata]:
                     codec=stream.get("codec_name", "unknown"),
                     channels=int(stream.get("channels", 0)),
                     sample_rate=int(stream.get("sample_rate", 0)),
-                    language=stream.get("tags", {}).get("language"),
+                    language=stream.get("tags", {}).get("language") or "",
                 ))
 
             elif codec_type == "subtitle":
                 subtitle_tracks.append(SubtitleTrack(
                     codec=stream.get("codec_name", "unknown"),
-                    language=stream.get("tags", {}).get("language"),
+                    language=stream.get("tags", {}).get("language") or "",
                 ))
 
         if video_data:

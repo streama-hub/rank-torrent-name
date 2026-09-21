@@ -1,17 +1,15 @@
 name: "\U0001F381 Feature Request"
-description: "Did you find bugs, errors, or anything that isn't straightforward in the documentation?"
+description: "Suggest a feature or improvement for Rank Torrent Name (RTN)."
 title: "[Feature]: "
 labels: ["kind/feature", "status/triage"]
-assignees:
-  - dreulavelle
 
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for taking the time to file a complete bug report.
+        Thank you for taking the time to describe your feature request.
 
-        Before submitting your issue, please search [issues](https://github.com/dreulavelle/rank-torrent-name/issues) to ensure this is not a duplicate.
+        Before submitting your request, please search [issues](https://github.com/streama-hub/rank-torrent-name/issues) to ensure this is not a duplicate.
 
         If the issue is trivial, why not submit a pull request instead?
 

@@ -1,10 +1,9 @@
 site_name: "Rank Torrent Name"
 site_description: "Rank Torrent Name is a powerful Python library that revolutionizes the way you handle filenames."
 site_author: 'Dreu LaVelle'
-site_url: 'https://ranktorrentname.com'
 
 repo_name: 'RTN'
-repo_url: 'https://github.com/dreulavelle/rank-torrent-name'
+repo_url: 'https://github.com/streama-hub/rank-torrent-name'
 
 nav:
   - Home: index.md
@@ -95,10 +94,8 @@ extra_javascript:
 
 extra:
   social:
-    - icon: 'fontawesome/brands/discord'
-      link: 'https://discord.gg/rivenmedia' 
     - icon: 'fontawesome/brands/github'
-      link: 'https://github.com/dreulavelle/rank-torrent-name'
+      link: 'https://github.com/streama-hub/rank-torrent-name'
 
 markdown_extensions:
   - attr_list

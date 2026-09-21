@@ -36,7 +36,7 @@ class RTN:
         `ranking_model` (BaseRankingModel): The model defining the ranking logic and score computation.
 
     Notes:
-        - The `settings` and `ranking_model` must be provided and must be valid instances of `SettingsModel` and `BaseRankingModel`.
+        - `settings` must be a `SettingsModel`. If `ranking_model` is omitted, `DefaultRanking` is used.
         - The `lev_threshold` is calculated from the `settings.options["title_similarity"]` and is used to determine if a torrent title matches a correct title.
 
     Example:
@@ -56,20 +56,16 @@ class RTN:
 
         Args:
             `settings` (SettingsModel): The settings model with user preferences for parsing and ranking torrents.
-            `ranking_model` (BaseRankingModel): The model defining the ranking logic and score computation.
-        
-        Raises:
-            ValueError: If settings or a ranking model is not provided.
-            TypeError: If settings is not an instance of SettingsModel or the ranking model is not an instance of BaseRankingModel.
+            `ranking_model` (BaseRankingModel): The ranking model. Defaults to `DefaultRanking` when omitted.
 
         Example:
             ```python
             from RTN import RTN
             from RTN.models import SettingsModel, DefaultRanking
 
-            settings_model = SettingsModel()
+            settings_model = SettingsModel(options={"title_similarity": 0.94})
             ranking_model = DefaultRanking()
-            rtn = RTN(settings_model, ranking_model, lev_threshold=0.94)
+            rtn = RTN(settings_model, ranking_model)
             ```
         """
         self.settings = settings
@@ -84,7 +80,7 @@ class RTN:
             `raw_title` (str): The original title of the torrent to parse.
             `infohash` (str): The SHA-1 hash identifier of the torrent.
             `correct_title` (str): The correct title to compare against for similarity. Defaults to an empty string.
-            `remove_trash` (bool): Whether to check for trash patterns and raise an error if found. Defaults to True.
+            `remove_trash` (bool): Whether to raise an error for rejected torrents, low ranks or title mismatches. Defaults to False.
             `speed_mode` (bool): Whether to use speed mode for fetching. Defaults to True.
 
         Returns:
@@ -93,26 +89,27 @@ class RTN:
         Raises:
             ValueError: If the title or infohash is not provided for any torrent.
             TypeError: If the title or infohash is not a string.
-            GarbageTorrent: If the title is identified as trash and should be ignored by the scraper, or invalid SHA-1 infohash is given.
+            GarbageTorrent: If the infohash length is not 40, or `remove_trash` is True and the torrent fails filtering, rank or title checks.
+            SettingsDisabled: If the settings are disabled.
 
         Notes:
             - If `correct_title` is provided, the Levenshtein ratio will be calculated between the parsed title and the correct title.
-            - If the ratio is below the threshold, a `GarbageTorrent` error will be raised.
+            - If the ratio is below the threshold and `remove_trash` is True, a `GarbageTorrent` error will be raised.
             - If no correct title is provided, the Levenshtein ratio will be set to 0.0.
 
         Example:
             ```python
             from RTN import RTN
-            from RTN.models import SettingsModel, DefaultRanking
+            from RTN.models import SettingsModel, DefaultRanking, Torrent, ParsedData
 
             settings_model = SettingsModel()
             ranking_model = DefaultRanking()
             rtn = RTN(settings_model, ranking_model)
-            torrent = rtn.rank("The Walking Dead S05E03 720p HDTV x264-ASAP[ettv]", "c08a9ee8ce3a5c2c08865e2b05406273cabc97e7")
+            torrent = rtn.rank("The Walking Dead S05E03 720p HDTV x264-ASAP[ettv]", "c08a9ee8ce3a5c2c08865e2b05406273cabc97e7", correct_title="The Walking Dead")
             assert isinstance(torrent, Torrent)
             assert isinstance(torrent.data, ParsedData)
             assert torrent.fetch
-            assert torrent.rank > 0
+            assert torrent.rank == -4500
             assert torrent.lev_ratio > 0.0
             ```
         """
@@ -157,12 +154,11 @@ class RTN:
 
 def parse(raw_title: str, translate_langs: bool = False) -> ParsedData:
     """
-    Parses a torrent title using PTN and enriches it with additional metadata extracted from patterns.
+    Parses a torrent title using PTT and enriches it with normalized title metadata.
 
     Args:
         - `raw_title` (str): The original torrent title to parse.
         - `translate_langs` (bool): Whether to translate the language codes in the parsed title. Defaults to False.
-        - `json` (bool): Whether to return the parsed data as a dictionary. Defaults to False.
 
     Returns:
         `ParsedData`: A data model containing the parsed metadata from the torrent title.
@@ -176,8 +172,8 @@ def parse(raw_title: str, translate_langs: bool = False) -> ParsedData:
         print(parsed_data.seasons) # [8]
         print(parsed_data.episodes) # [6]
         print(parsed_data.resolution) # '1080p'
-        print(parsed_data.audio) # ['DD5.1']
-        print(parsed_data.codec) # 'H264'
+        print(parsed_data.audio) # ['Dolby Digital']
+        print(parsed_data.codec) # 'avc'
         ```
     """
     if not raw_title or not isinstance(raw_title, str):
@@ -188,8 +184,7 @@ def parse(raw_title: str, translate_langs: bool = False) -> ParsedData:
         **data,
         raw_title=raw_title,
         parsed_title=data.get("title", ""),
-        normalized_title=normalize_title(data.get("title", "")),
-        _3d=data.get("3d", False)
+        normalized_title=normalize_title(data.get("title", ""))
     )
 
     return parsed_data

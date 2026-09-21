@@ -2,14 +2,12 @@ name: "\U0001F41E Request to Help in Development of RTN"
 description: "Want to help in the development of Rank Torrent Name (RTN)?"
 title: "[Help]: "
 labels: ["kind/maintainer", "status/triage"]
-assignees:
-  - dreulavelle
 
 body:
   - type: markdown
     attributes:
       value: |
-        Thank you for taking the time to file a complete bug report.
+        Thank you for your interest in contributing to RTN.
 
   - type: dropdown
     attributes:

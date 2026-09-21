@@ -2,28 +2,25 @@
 
 <h1>Rank Torrent Name (RTN)</h1>
 
-<a href="https://codecov.io/gh/dreulavelle/rank-torrent-name"> 
- <img src="https://codecov.io/gh/dreulavelle/rank-torrent-name/graph/badge.svg?token=V9S89GSUKM"/> 
-</a>
+<img src="https://img.shields.io/github/actions/workflow/status/streama-hub/rank-torrent-name/battery.yml?branch=main" alt="GitHub Actions Workflow Status" />
 
-<a href="https://badge.fury.io/py/rank-torrent-name">
-    <img src="https://badge.fury.io/py/rank-torrent-name.svg" alt="PyPI version" />
-</a>
-
-<img src="https://img.shields.io/github/actions/workflow/status/dreulavelle/rank-torrent-name/battery.yml" alt="GitHub Actions Workflow Status" />
-
-<img src="https://img.shields.io/github/license/dreulavelle/rank-torrent-name" alt="GitHub License" />
+<img src="https://img.shields.io/github/license/streama-hub/rank-torrent-name" alt="GitHub License" />
 
 </div>
 <br>
 
 **Rank Torrent Name (RTN)** is a Python library designed to parse and rank torrent names based on customizable criteria. It allows users to define their preferences for filtering and ranking torrents, providing a detailed analysis of each torrent's metadata. RTN is perfect for automating the selection of torrents based on quality, resolution, audio, and more.
 
+Parsed audio and subtitle languages are exposed as `audio_languages` and
+`subtitle_languages` in parsed models and JSON. Use these names when constructing
+or reading parsed data. Filtering preferences use
+`settings.languages`.
+
 > **RTN** is mean't to be used as a Version and Ranking System for parsing and scoring scraped torrent results.
 
 ## Features
 
-- **Advanced Torrent Parsing:** Utilizes PTN for parsing and enriches metadata with custom-defined patterns.
+- **Advanced Torrent Parsing:** Utilizes PTT for parsing and preserves its detailed metadata.
 - **Customizable Ranking:** Define detailed preferences for ranking torrents based on attributes like resolution, audio quality, and others.
 - **Flexible Filtering:** Easily specify requirements, exclusions, and preferences for torrent selection.
 - **Comprehensive Ranking Model:** Includes a default ranking model that can be customized or extended according to your needs.
@@ -31,15 +28,21 @@
 
 ## Installation
 
-```bash
-pip install rank-torrent-name
-```
-
-or you can add it to your project through `Poetry` as well,
+Install RTN and its dependencies:
 
 ```bash
-poetry add rank-torrent-name
+pip install git+https://github.com/streama-hub/rank-torrent-name.git
 ```
+
+For development, clone the repository and install the dependencies with Poetry:
+
+```bash
+git clone https://github.com/streama-hub/rank-torrent-name.git
+cd rank-torrent-name
+poetry install --with dev
+```
+
+PTT is installed automatically from the revision pinned in the project dependencies.
 
 ## Quick Start
 
@@ -184,8 +187,8 @@ Example usage:
 from RTN.models import BaseRankingModel
 
 class MyRankingModel(BaseRankingModel):
-    uhd = 200  # Ultra HD content
-    hdr = 100  # HDR content
+    uhd: int = 200  # Ultra HD content
+    hdr: int = 100  # HDR content
     # Define more attributes and scores as needed
 ```
 
@@ -270,7 +273,7 @@ Create as many `SettingsModel` and `RankingModel` as you like to use anywhere in
 
 ## Torrent Parser
 
-You can also parse a torrent title similar to how PTN works. This is an enhanced version of PTN that combines RTN's parsing as well. This also includes enhanced episode parsing as well that covers a much better range of titles.
+Use `parse` to parse a torrent title with PTT and return an RTN `ParsedData` model.
 
 Using the example above:
 
@@ -278,13 +281,14 @@ Using the example above:
 from RTN import parse
 parsed = parse("Example.Movie.2020.1080p.BluRay.x264-Example")
 
-print(parsed.data.raw_title)    # Output: "Example.Movie.2020.1080p.BluRay.x264-Example"
-print(parsed.data.parsed_title) # Output: "Example Movie"
-print(parsed.data.year)         # Output: [2020]
+print(parsed.raw_title)    # Output: "Example.Movie.2020.1080p.BluRay.x264-Example"
+print(parsed.parsed_title) # Output: "Example Movie"
+print(parsed.year)         # Output: 2020
 ```
 
-> :warning: We also set **coherent_types** to `True` from the PTN data that get's combined with RTN parsed metadata.
-> This just ensures that all the types are uniform. **Everything is either a list of string or int's, or it's a boolean.**
+PTT provides the extracted values; RTN validates them through `ParsedData`.
+Fields have explicit types: strings, numbers, booleans and lists. Consult
+`ParsedData.model_json_schema()` for each field's type and default.
 
 ## Checking Title Similarity
 
@@ -306,9 +310,9 @@ This functionality is especially useful when you have a list of potential titles
 Maybe you just want to use our own garbage collector to weed out bad titles in your current scraping setup?
 
 ```py
-from RTN import check_trash
+from RTN import parse
 
-if check_trash(raw_title):
+if parse(raw_title).trash:
     # You can safely remove any title or item from being scraped if this returns True!
     ...
 ```
@@ -318,20 +322,20 @@ if check_trash(raw_title):
 Now you can check if a raw torrent title is a `movie` or a `show` type!
 
 ```py
-from RTN.parser import get_type, parse
+from RTN import parse
 
-parsed_data = parse("Joker.2019.PROPER.mHD.10Bits.1080p.BluRay.DD5.1.x265-TMd", remove_trash = False)
+parsed_data = parse("Joker.2019.PROPER.mHD.10Bits.1080p.BluRay.DD5.1.x265-TMd")
 print(parsed_data.type)
 >>> "movie"
 ```
 
-Alternatively, if you prefer a boolean, you can use `is_movie` instead, like so:
+For a boolean, compare the parsed type:
 
 ```py
-from RTN.parser import is_movie, parse
+from RTN import parse
 
-parsed_data = parse("Joker.2019.PROPER.mHD.10Bits.1080p.BluRay.DD5.1.x265-TMd", remove_trash = False)
-print(is_movie(parsed_data))
+parsed_data = parse("Joker.2019.PROPER.mHD.10Bits.1080p.BluRay.DD5.1.x265-TMd")
+print(parsed_data.type == "movie")
 >>> True
 ```
 
@@ -356,12 +360,12 @@ rtn = RTN(settings=settings, ranking_model=DefaultRanking())
                 # that are below the 90% match criteria. (Default is 90%)
                 continue
             try:
-                torrent: Torrent = rtn.rank(stream.title, stream.infohash)
+                torrent: Torrent = rtn.rank(stream.title, stream.infohash, remove_trash=True)
             except GarbageTorrent:
                 # One thing to note is that as we parse titles, we also get rid of garbage.
                 # Feel free to add your own logic when this happens!
-                # You can bypass this by setting `remove_trash` to `False` in `rank` or `parse`.
-                pass
+                # You can bypass this by setting `remove_trash` to `False` in `rank`.
+                continue
             if torrent and torrent.fetch:
                 # If torrent.fetch is True, then it's a good torrent,
                 # as considered by your ranking profile and settings model.
@@ -379,48 +383,25 @@ for torrent in sorted_torrents:
 
 # ParsedData Structure
 
-Here is all of the attributes of `data` from the `Torrent` object, along with their default values.
-
-This is accessible at `torrent.data` in the `Torrent` object. Ex: `torrent.data.resolution`
+Parsed values are available through `torrent.data`, for example
+`torrent.data.audio_languages` or `torrent.data.resolution`. See the
+[parsing reference](docs/devs/parsing.md) for field descriptions. Inspect the
+model schema for the complete list of fields, types and defaults:
 
 ```py
-class ParsedData(BaseModel):
-    """Parsed data model for a torrent title."""
+from RTN import ParsedData
 
-    raw_title: str
-    parsed_title: str
-    fetch: bool = False
-    is_4k: bool = False
-    is_multi_audio: bool = False
-    is_multi_subtitle: bool = False
-    is_complete: bool = False
-    year: int = 0
-    resolution: List[str] = []
-    quality: List[str] = []
-    season: List[int] = []
-    episode: List[int] = []
-    codec: List[str] = []
-    audio: List[str] = []
-    subtitles: List[str] = []
-    language: List[str] = []
-    bitDepth: List[int] = []
-    hdr: str = ""
-    proper: bool = False
-    repack: bool = False
-    remux: bool = False
-    upscaled: bool = False
-    remastered: bool = False
-    directorsCut: bool = False
-    extended: bool = False
+print(ParsedData.model_json_schema())
 ```
 
 This will continue to grow though as we expand on functionality, so keep checking back for this list!
 
-> :warning: Don't see something you want in the list? Submit a [Feature Request](https://github.com/dreulavelle/rank-torrent-name/issues/new?assignees=dreulavelle&labels=kind%2Ffeature%2Cstatus%2Ftriage&projects=&template=---feature-request.yml) to have it added!
+Find the source and proposed changes on [GitHub](https://github.com/streama-hub/rank-torrent-name).
 
 ## Performance Benchmarks
 
-Here, we dive into the heart of RTN's efficiency, showcasing how it performs under various loads. Whether you're parsing a single title or ranking thousands, understanding these benchmarks will help you optimize your use of RTN.
+These historical upstream measurements are retained for reference. They are not
+measurements of this fork or a guarantee for your workload.
 
 ### Benchmark Categories
 
@@ -447,64 +428,27 @@ To facilitate comparison, we've compiled the results into a single table:
 
 To run your own benchmark, you can clone the repo and run `make benchmark` from inside the root of the repository.
 
-### Benchmark Settings
-
-- **Small batch parsing** used a `chunk_size` of `10`.
-- **Large batch parsing** handled `chunk_size` of `200`.
-- **XLarge batch parsing** handled `chunk_size` of `500`.
-- **Small batch ranking** operated with the default `max_workers` of `4` and used a `chunk_size` of `10`.
-- **Large batch ranking** escalated concurrency with `max_workers` of `8` and handled a `chunk_size` of `200`.
-- **XLarge batch ranking** escalated concurrency with `max_workers` of `16` and handled a `chunk_size` of `500`.
+The current benchmark script runs repeated `parse` and `rank` calls sequentially.
+It does not use batch API functions, chunk sizes or worker pools.
 
 
 This data shows RTN's robust capability to efficiently process both small and extensive datasets.
 
 ## Optimizing RTN Performance
 
-The performance benchmarks provided give a glimpse into how RTN handles different loads, from parsing single titles to ranking thousands. For developers looking to integrate RTN into their applications efficiently, here are some tips on tweaking performance:
-
-### 1. Adjusting Chunk Size for Batch Parsing
-The `batch_parse` function allows you to parse titles in batches, significantly reducing processing time for large datasets. However, the optimal `chunk_size` can vary depending on the dataset size and your system's resources.
-
-- For smaller datasets, a lower `chunk_size` might suffice, keeping overhead low.
-- For larger datasets, increasing `chunk_size` can reduce the number of batches processed and potentially lower overall processing time.
-
-Experiment with different `chunk_size` values to find the sweet spot for your particular use case.
-
-### 2. Tuning Concurrency in Batch Ranking
-The `batch_rank` function uses multiple threads to rank torrents in parallel, which can significantly speed up processing for large numbers of torrents.
-
-- The default `max_workers` value is set to `4`, but this might not be optimal for all systems.
-- Systems with higher CPU core counts might benefit from increasing `max_workers`, allowing more torrents to be processed simultaneously.
-- However, setting `max_workers` too high can lead to diminishing returns and increased overhead. Monitor your system's resource utilization to find an optimal setting.
-
-### 3. Leveraging ThreadPoolExecutor
-Both `batch_parse` and `batch_rank` utilize `ThreadPoolExecutor` for parallel processing. Adjusting the `max_workers` parameter can help manage how many threads are used for these operations, impacting performance and resource utilization.
-
-### 4. Custom Settings and Ranking Models
-Customizing `SettingsModel` and `RankingModel` allows you to tailor the parsing and ranking criteria to your needs, potentially streamlining the processing by focusing only on relevant data.
-
-- Evaluate which torrent attributes are essential for your application and adjust your settings model accordingly.
-- Consider disabling unnecessary custom ranks or attributes in the ranking model to simplify the ranking process.
-
-### Example: Tweaking Performance for Large Datasets
-
-Suppose you're processing a dataset of 10,000 torrent titles. You might start with a default `chunk_size` of `50` and `max_workers` of `4`. Through experimentation, you find that increasing `chunk_size` to `500` and `max_workers` to `8` cuts your processing time in half.
+Reuse an `RTN` instance when ranking several torrents with the same settings.
+The public API processes one title per `parse` or `rank` call; applications own
+batching and concurrency. Measure those choices with your own titles and settings.
 
 ```python
-from RTN import RTN, SettingsModel, DefaultRanking, batch_parse
+from RTN import RTN, SettingsModel, parse
 
-# Setup
-settings = SettingsModel()
-ranking_model = DefaultRanking()
-rtn = RTN(settings=settings, ranking_model=ranking_model)
-
-# Optimized batch parsing
-optimized_titles = ["Title 1", "Title 2", ..., "Title 10000"]
-parsed_data = batch_parse(optimized_titles, chunk_size=500, max_workers=8)
+titles = ["Example.2024.1080p.BluRay", "Example.S01E02.720p.WEB-DL"]
+parsed_data = [parse(title) for title in titles]
+rtn = RTN(SettingsModel())
 ```
 
-By monitoring performance and adjusting parameters based on your specific requirements and system capabilities, you can significantly enhance RTN's efficiency in your projects.
+For ranking, call `rtn.rank(title, infohash)` with each torrent's actual infohash.
 
 ## Contributing
 
